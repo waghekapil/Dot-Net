@@ -1,0 +1,703 @@
+﻿@model  EducationHub.Models.ExQuestiontable
+
+@{
+    ViewBag.Title = "AddNew";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+ 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+
+@Html.Partial("_LeftMenu")
+
+<script src="~/Areas/Admin/ckeditordev/ckeditor.js"></script>
+<script src="~/Areas/Admin/ckeditordev/config.js"></script>
+<script src="~/Areas/Admin/ckeditordev/styles.js"></script>
+<script src="~/Areas/Admin/ckeditordev/adapters/jquery.js"></script>
+
+<div class="col-md-10">
+
+    <div class="row">
+        <div class="panel panel-default bootstrap-admin-no-table-panel">
+            <div class="panel-heading">
+                <div class="text-muted bootstrap-admin-box-title"></div>
+            </div>
+            <div class="bootstrap-admin-no-table-panel-content bootstrap-admin-panel-content collapse in">
+
+                @*@using (Html.BeginForm("AddNew", "Question", FormMethod.Post, new { enctype = "multipart/form-data", @id = "AddNewQuestion", @class = "form-horizontal" })) { }*@
+
+                @using (Html.BeginForm(new { enctype = "multipart/form-data", @id = "AddNewQuestion", @class = "form-horizontal" }))
+                {
+                    @*<p>
+                            $$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+
+                        </p>*@
+                    <fieldset>
+                        <legend>Add New Question</legend>
+
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Test</label>
+                            <div class="col-lg-10">
+                                @Html.DropDownListFor(m => m.TestId, Enumerable.Empty<SelectListItem>(), new { @name = "Testid", @class = "form-control" })
+                            </div>
+                        </div>
+                        <hr />
+                        <fieldset>
+                            <legend>Question</legend>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label">Suject</label>
+                                <div class="col-lg-10">
+                                    @Html.DropDownListFor(m => m.Questionmodel.SubjectId, Enumerable.Empty<SelectListItem>(), new { @name = "SubjectId", @class = "form-control" })
+                                    <br>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="textarea-wysihtml5">Question</label>
+                                <div class="col-lg-10">
+                                    @Html.TextAreaFor(m => m.Questionmodel.Question, new { @class = "form-control textarea-wysihtml5", @style = "width: 100%; height: 100px" })
+                                    <br>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="typeahead">Option A</label>
+                                <div class="col-lg-10">
+                                    @Html.TextBoxFor(m => m.Questionmodel.Option1, new { @class = "form-control", @onkeyup = "UpdateMath(1,this.value)" })
+                                    <div class="box" id="box1" style="visibility:hidden">
+                                        <div id="MathOutput1">` `</div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="typeahead">Option B</label>
+                                <div class="col-lg-10">
+                                    @Html.TextBoxFor(m => m.Questionmodel.Option2, new { @class = "form-control", @onkeyup = "UpdateMath(2,this.value)" })
+                                    <div class="box" id="box2" style="visibility:hidden">
+                                        <div id="MathOutput2">` `</div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="typeahead">Option C</label>
+                                <div class="col-lg-10">
+                                    @Html.TextBoxFor(m => m.Questionmodel.Option3, new { @class = "form-control", @onkeyup = "UpdateMath(3,this.value)" })
+                                    <div class="box" id="box3" style="visibility:hidden">
+                                        <div id="MathOutput3">` `</div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="typeahead">Option D</label>
+                                <div class="col-lg-10">
+                                    @Html.TextBoxFor(m => m.Questionmodel.Option4, new { @class = "form-control", @onkeyup = "UpdateMath(4,this.value)" })
+
+                                    <div class="box" id="box4" style="visibility:hidden">
+                                        <div id="MathOutput4">` `</div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                          
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="focusedInput">Marks</label>
+                                <div class="col-lg-10">
+                                    @Html.TextBoxFor(m => m.Questionmodel.Marks, new { @maxlength = "1", @class = "form-control numericOnly" })
+                                    <br>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="IsInputAnswer">Input Answer</label>
+                                <div class="col-lg-10">
+                                    <label>@Html.CheckBoxFor(m => m.Questionmodel.IsInputAnswer)</label> &nbsp;&nbsp;&nbsp;
+                                    <label for="IsMultiSelect">Multi Select</label> &nbsp;&nbsp;
+
+                                    <input id="IsMultiSelectN" type="radio" class="clsOption" name="IsMultiSelect" value="N" checked="checked" />No
+                                    <input id="IsMultiSelectY" type="radio" class="clsOption" name="IsMultiSelect" value="Y" />Yes
+
+                                    <div id="optionsradio" style="display:block">
+                                        <input type="radio" class="clsOption" name="Option" value="A" />Option A
+                                        <input type="radio" class="clsOption" name="Option" value="B" />Option B
+                                        <input type="radio" class="clsOption" name="Option" value="C" />Option C
+                                        <input type="radio" class="clsOption" name="Option" value="D" />Option D
+                                    </div>
+                                    <div id="optionschk" style="display:none">
+                                        <input type="checkbox" class="clschkOption" name="chkOption" value="A" />Option A
+                                        <input type="checkbox" class="clschkOption" name="chkOption" value="B" />Option B
+                                        <input type="checkbox" class="clschkOption" name="chkOption" value="C" />Option C
+                                        <input type="checkbox" class="clschkOption" name="chkOption" value="D" />Option D
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="focusedInput">Answer</label>
+                                <div class="col-lg-10">
+                                    @*@Html.TextBoxFor(m => m.Questionmodel.Answer, new { @class = "form-control" })*@
+                                    <input type="text" id="Questionmodel_Answer" class="form-control" readonly />
+                                    <br>
+                                </div>
+                            </div>
+                            <center> <input type="button" class="btn btn-primary" onclick="Add()" value="Add" /></center>
+                            <br />
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label" for="focusedInput">Question Details</label>
+                                <br />
+                                <div class="col-lg-12">
+                                    <table id="tblQuestion" cellpadding="0" cellspacing="0" border="1">
+                                        <thead>
+                                            <tr>
+                                                <th>TestId</th>
+                                                <th>SubjectId</th>
+                                                <th>Test Name</th>
+                                                <th>Suject Name</th>
+                                                <th>Questions</th>
+                                                <th>Options</th>
+                                                <th>Marks</th>
+                                                <th>IsInputAnswer</th>
+                                                <th>IsMultiSelect</th>
+                                                <th>Answer</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+
+                        </fieldset>
+                        <center>
+                            <center><input type="button" class="btn btn-primary" onclick="SaveQuestion()" value="Save" /></center>
+
+                        </center>
+                    </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+
+    CKEDITOR.replace('Questionmodel_Question', {
+        extraPlugins: 'mathjax',
+        mathJaxLib: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
+        height: 180
+    });
+
+    if (MathJax.Hub.Browser.isMSIE) {
+        MathInput.onkeypress = function () {
+            if (window.event && window.event.keyCode === 13) { this.blur(); this.focus() }
+        }
+        MathInput.onkeyup = function () {
+            if (window.event && window.event.keyCode === 13) { this.blur(); this.focus() }
+        }
+    }
+
+
+</script>
+
+<script>
+
+
+
+    $("#IsMultiSelectY").click(function () {
+
+        var selectedvalue = $("input[name='IsMultiSelect']:checked").val();
+
+        if (selectedvalue == "Y") {
+            $("#optionsradio").css("display", "none");
+            $("#optionschk").css("display", "block");
+
+        }
+
+    });
+    $("#IsMultiSelectN").click(function () {
+
+        var selectedvalue = $("input[name='IsMultiSelect']:checked").val();
+        if (selectedvalue == "N") {
+            $("#optionsradio").css("display", "block");
+            $("#optionschk").css("display", "none");
+        }
+    });
+    $("#optionsradio input[name='Option']").on("click", function () {
+        var Answer = $("input[name='Option']:checked").val();
+        $('#Questionmodel_Answer').val("");
+        $('#Questionmodel_Answer').val(Answer);
+    });
+
+    $("#optionschk input[type=checkbox]").on("click", function () {
+        var Answer = "";
+
+        var checkboxes = document.querySelectorAll('#optionschk input[type=checkbox]:checked')
+        $.each(checkboxes, function (idx, val) {
+            Answer += val.value + ",";
+        });
+
+        $('#Questionmodel_Answer').val("");
+        $('#Questionmodel_Answer').val(Answer);
+
+    });
+
+    //OptionA
+
+    //$('#Questionmodel_Option1').change(function () {
+    //    $('#OptionA').html("");
+    //    if ($(this).val() != "") {
+
+    //        $('#OptionA').html($(this).val());
+
+    //    }
+    //});
+    //$('#Questionmodel_Option2').change(function () {
+    //    $('#OptionB').html("");
+    //    if ($(this).val() != "") {
+
+
+    //        $('#OptionB').html($(this).val());
+    //    }
+    //});
+    //$('#Questionmodel_Option3').change(function () {
+    //    $('#OptionC').html("");
+    //    if ($(this).val() != "") {
+
+    //        $('#OptionC').html($(this).val());
+
+    //    }
+    //});
+    //$('#Questionmodel_Option4').change(function () {
+    //    $('#OptionD').html("");
+    //    if ($(this).val() != "") {
+
+    //        $('#OptionD').html($(this).val());
+
+    //    }
+    //});
+
+
+    function Add() {
+
+        var isValid = true;
+        //debugger;
+
+        //var TextGrab = CKEDITOR.instances['Questionmodel_Question'].getData();
+        //TextGrab = $(TextGrab).text(); // html to text
+        //TextGrab = TextGrab.replace(/\r?\n|\r/gm, " "); // remove line breaks
+        //TextGrab = TextGrab.replace(/\s\s+/g, " ").trim(); // remove double spaces
+
+
+        var TestId = $('select#TestId').val();
+        var Testtext = $('select#TestId option:selected').text();
+        var subjectId = $('select#Questionmodel_SubjectId').val();
+        var subjecttext = $('select#Questionmodel_SubjectId option:selected').text();
+        var MultiSelectYN = $("input[name='IsMultiSelect']:checked").val();
+        //var Question = $('#Questionmodel_Question').val();// Questionmodel_Question').val();
+        var Question = CKEDITOR.instances['Questionmodel_Question'].getData();
+
+        var Option1 = $('#Questionmodel_Option1').val();
+        var Option2 = $('#Questionmodel_Option2').val();
+        var Option3 = $('#Questionmodel_Option3').val();
+        var Option4 = $('#Questionmodel_Option4').val();
+        var Marks = $('#Questionmodel_Marks').val();
+
+        var IsInputAnswer = $('#Questionmodel_IsInputAnswer').val();
+        var IsMultiSelect;
+
+        if (MultiSelectYN == "Y") {
+            IsMultiSelect = 1;
+        }
+        if (MultiSelectYN != "Y") {
+            IsMultiSelect = 0;
+        }
+
+        var Answer = $('#Questionmodel_Answer').val();
+        var Option = Option1 + "," + Option2 + "," + Option3 + "," + Option4;
+        if (TestId.length == 0 || TestId == "" || TestId == "0") {
+
+            alert("Select Test"); isValid = false;
+        }
+
+        if (subjectId.length == 0 || subjectId == "" || subjectId == "0") {
+
+            alert("Select Subject");
+            isValid = false;
+        }
+        if (Question.length == 0 || Question == "") { alert("Question requied"); isValid = false; }
+
+
+
+        if (Option1.length == 0 || Option1 == "") { alert("Option1 requied"); isValid = false; }
+        if (Option2.length == 0 || Option2 == "") { alert("Option2 requied"); isValid = false; }
+        if (Option3.length == 0 || Option3 == "") { alert("Option3 requied"); isValid = false; }
+        if (Option4.length == 0 || Option4 == "") { alert("Option4 requied"); isValid = false; }
+
+        if (Answer.length == 0 || Answer == "") { alert("Answer requied"); isValid = false; }
+        if (isValid == true) {
+            AddRow(TestId, subjectId, Testtext, subjecttext, Question, Option, Marks, IsInputAnswer, IsMultiSelect, Answer);
+            $('#cke_Questionmodel_Question').val("");//Questionmodel_Question
+            $('#Questionmodel_Option1').val("");
+            $('#Questionmodel_Option2').val("");
+            $('#Questionmodel_Option3').val("");
+            $('#Questionmodel_Option4').val("");
+            $('#Questionmodel_Marks').val("");
+
+            CKEDITOR.instances['Questionmodel_Question'].setData("");
+           //CKEDITOR.instances.editor1.setData('');
+
+            //style.visibility = "hidden"
+            //style.visibility = "visible"
+            $('#box1').css("visibility","hidden");
+            $('#box2').css("visibility", "hidden");
+            $('#box3').css("visibility", "hidden");
+            $('#box4').css("visibility", "hidden");
+
+
+
+            $('#MathOutput1').val("");
+            $('#MathOutput2').val("");
+            $('#MathOutput3').val("");
+            $('#MathOutput4').val("");
+
+            $("#IsMultiSelectY").prop("checked", false);
+            $("#IsMultiSelectN").prop("checked", true);
+
+
+
+
+            $('#Questionmodel_IsInputAnswer').prop("checked", false);
+
+            $("#optionsradio").css("display", "block");
+            $("#optionschk").css("display", "none");
+
+            $('#optionschk input[type=checkbox]:checked').removeAttr('checked');
+            $('#optionsradio input[type=radio]:checked').removeAttr('checked');
+
+            $('#Questionmodel_Answer').val("");
+            $('select#Questionmodel_SubjectId').val("0");
+
+
+        }
+    };
+    function AddRow(TestId, SubjectId, Testtext, subjecttext, Question, Option, Marks, IsInputAnswer, IsMultiSelect, Answer) {
+        //Get the reference of the Table's TBODY element.
+
+
+        var tBody = $("#tblQuestion > tbody")[0];
+
+        row = tBody.insertRow(-1);
+        //debugger;
+        //Add Row.TestId,
+        var cell = $(row.insertCell(-1));
+        cell.html(TestId);
+
+        //Add  cell. // SubjectId,
+        var cell = $(row.insertCell(-1));
+        cell.html(SubjectId);
+        // Testtext,
+        cell = $(row.insertCell(-1));
+        cell.html(Testtext);
+
+        // subjecttext,
+        cell = $(row.insertCell(-1));
+        cell.html(subjecttext);
+
+        // Question,
+        cell = $(row.insertCell(-1));
+        cell.html(Question);
+        //// Option,
+        cell = $(row.insertCell(-1));
+        cell.html(Option);
+        //Marks,
+        cell = $(row.insertCell(-1));
+        cell.html(Marks);
+
+        // IsInputAnswer,
+        cell = $(row.insertCell(-1));
+        cell.html(IsInputAnswer);
+        //cell.style.display == 'none'
+
+        //IsMultiSelect,
+        cell = $(row.insertCell(-1));
+        cell.html(IsMultiSelect);
+        // cell.style.display == 'none'
+
+        // Answer
+        cell = $(row.insertCell(-1));
+        cell.html(Answer);
+
+
+
+        //Add Button cell.
+        cell = $(row.insertCell(-1));
+        var btnRemove = $("<input />");
+        btnRemove.attr("type", "button");
+        btnRemove.attr("onclick", "Remove(this);");
+        btnRemove.val("Remove");
+        cell.append(btnRemove);
+    };
+    function Remove(button) {
+        //Determine the reference of the Row using the Button.
+        var row = $(button).closest("tr");
+        var name = $("td", row).eq(0).html();
+        if (confirm("Do you want to delete: " + name)) {
+
+            //Get the reference of the Table.
+            var table = $("#tblQuestion")[0];
+            //Delete the Table row using it's Index.
+            table.deleteRow(row[0].rowIndex);
+        }
+    };
+
+    function SaveQuestion() {
+        var rowCount = $('#tblQuestion >tbody >tr').length;
+        var isValid = true;
+        var Testquestion = Array();// var data;
+        if (rowCount > 0) {
+
+            //var data = getTableData($('#tblQuestion >tbody'));
+
+
+            var tbl = document.getElementById("tblQuestion");
+
+            if (tbl != null) {
+
+                for (var i = 0; i < tbl.rows.length; i++) {
+                    if (i > 0) {
+                        Testquestion.push(new TQ(
+                            tbl.rows[i].cells[0].innerHTML,
+                            tbl.rows[i].cells[1].innerHTML,
+                            tbl.rows[i].cells[2].innerHTML,
+                            tbl.rows[i].cells[3].innerHTML,
+                            tbl.rows[i].cells[4].innerHTML,
+                            tbl.rows[i].cells[5].innerHTML,
+                            tbl.rows[i].cells[6].innerHTML,
+                            tbl.rows[i].cells[7].innerHTML,
+                            tbl.rows[i].cells[8].innerHTML,
+                            tbl.rows[i].cells[9].innerHTML));
+                    }
+
+                }
+            }
+
+            var posdata = { model: Testquestion }
+            $.ajax({
+                url: '/Question/QuestionInfo',
+                data: JSON.stringify(posdata),
+                success: function (data) {
+                    var result = data.status;
+                    alert(result);
+                    $('#tblQuestion >tbody').empty("");
+                    //setTimeout(function () {
+                    //    $("#errMsg").empty();
+                    //}, 100);
+                    window.location.href = "/Admin/Question";
+                },
+                error: function () { },
+                type: 'POST',
+                contentType: 'application/json, charset=utf-8',
+                dataType: 'json'
+            });
+
+
+        }
+        else {
+            alert("Please Test wise questions");
+            isValid = false;
+        }
+    }
+
+    function TQ(
+        TestId, SubjectId, Testtext, subjecttext, Question, Option, Marks, IsInputAnswer, IsMultiSelect, Answer
+    ) {
+
+        return {
+            TestId: TestId,
+            SubjectId: SubjectId,
+            Testtext: Testtext,
+            subjecttext: subjecttext,
+            Question: Question,
+            Option: Option,
+            Marks: Marks,
+            IsInputAnswer: IsInputAnswer,
+            IsMultiSelect: IsMultiSelect,
+            Answer: Answer
+        };
+    };
+
+    function getTableData(table) {
+
+        var data = [];
+        table.find('tr').each(function (rowIndex, r) {
+            var cols = [];
+            $(this).find('th,td').each(function (colIndex, c) {
+                cols.push(c.textContent);
+            });
+            data.push(cols);
+        });
+        return data;
+    }
+</script>
+<script>
+    $(function () {
+
+        $(".numericOnly").bind('keypress', function (e) {
+            if (e.keyCode == '9' || e.keyCode == '16') {
+                return;
+            }
+            var code;
+            if (e.keyCode) code = e.keyCode;
+            else if (e.which) code = e.which;
+            if (e.which == 46)
+                return false;
+            if (code == 8 || code == 46)
+                return true;
+            if (code < 48 || code > 57)
+                return false;
+        });
+
+        //Disable paste
+        $(".numericOnly").bind("paste", function (e) {
+            e.preventDefault();
+        });
+
+        $(".numericOnly").bind('mouseenter', function (e) {
+            var val = $(this).val();
+            if (val != '0') {
+                val = val.replace(/[^0-9]+/g, "")
+                $(this).val(val);
+            }
+        });
+
+
+        function FillTestMastery() {
+
+            $.ajax({
+                dataType: 'json',
+                type: 'POST',
+                url: '/Question/GetTestMastery',
+                data: '',
+                success: function (json) {
+                    var data = eval(json);
+                    $('select#TestId').empty();
+                    $('select#TestId').append('<option selected="selected"  value="0">Select Test</option>');
+                    $.each(data, function (key, value) {
+                        // debugger;
+                        var val = value.PK_TestId;
+                        var Text = value.TestName;
+                        $('select#TestId').append('<option   data-Id="' + val + '"     value="' + val + '">' + Text + '</option>');
+                        //if (cusCountryId != 0 && cusCountryId != '' && cusCountryId == val) {
+                        //    $("select#Categoryid").children().removeAttr("selected");
+                        //    $('select#Categoryid').append('<option  selected="selected"  data-Id="' + val + '"     value="' + val + '">' + Text + '</option>');
+                        //}
+                        //else {
+                        //    $('select#Categoryid').append('<option   data-Id="' + val + '"     value="' + val + '">' + Text + '</option>');
+                        //}
+                    })
+
+                },
+                fail: function () { }
+            });//end of ajax post
+        }
+        //$('#Questionmodel.Answer').val();
+        //Questionmodel.Answer
+        function FillSubject() {
+
+            $.ajax({
+                dataType: 'json',
+                type: 'POST',
+                url: '/Question/GetSubject',
+                data: '',
+                success: function (json) {
+                    var data = eval(json);
+                    $('select#Questionmodel_SubjectId').empty();
+                    $('select#Questionmodel_SubjectId').append('<option selected="selected"  value="0">Select Subject</option>');
+                    $.each(data, function (key, value) {
+                        var val = value.PK_SubjectId;
+                        var Text = value.SubjectName;
+                        $('select#Questionmodel_SubjectId').append('<option   data-Id="' + val + '"     value="' + val + '">' + Text + '</option>');
+                        //if (cusCountryId != 0 && cusCountryId != '' && cusCountryId == val) {
+                        //    $("select#Categoryid").children().removeAttr("selected");
+                        //    $('select#Categoryid').append('<option  selected="selected"  data-Id="' + val + '"     value="' + val + '">' + Text + '</option>');
+                        //}
+                        //else {
+                        //    $('select#Categoryid').append('<option   data-Id="' + val + '"     value="' + val + '">' + Text + '</option>');
+                        //}
+                    })
+
+                },
+                fail: function () { }
+            });//end of ajax post
+        }
+
+        $.when(FillTestMastery()).then(FillSubject());
+
+
+        //$('.datepicker').datepicker();
+        //$('.uniform_on').uniform();
+        //$('.chzn-select').chosen();
+
+
+        //CKEditor Full
+        //$('#Questionmodel_Question').ckeditor({
+        //    extraPlugins: 'mathjax',
+        //    mathJaxLib: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
+        //    height: '200px'
+        //});
+        //$('textarea#Questionmodel_Question').ckeditor({
+        //    height: '200px'
+        //});
+
+
+        //$('textarea#Questionmodel_Question').ckeditor({
+        //    extraPlugins: 'mathjax',
+        //    mathJaxLib: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
+        //    height: '150px',
+        //    toolbar: [
+        //        { name: 'document', items: ['Source', '-', 'NewPage', 'Preview', '-', 'Templates', 'Mathjax'] }, // Defines toolbar group with name (used to create voice label) and items in 3 subgroups.
+        //        ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo'], // Defines toolbar group without name.
+        //        { name: 'basicstyles', items: ['Bold', 'Italic'] }
+        //    ]
+        //});
+
+    });
+</script>
+
+<script>
+    //
+    //  Use a closure to hide the local variables from the
+    //  global namespace
+    //
+    (function () {
+        var slides = 4;                 // number of slides
+        var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
+        var math = [], box = [];
+
+        //
+        //  Hide and show the box (so it doesn't flicker as much)
+        //
+        var HIDEBOX = function (i) { box[i].style.visibility = "hidden" }
+        var SHOWBOX = function (i) { box[i].style.visibility = "visible" }
+
+        //
+        //  Get the element jax when MathJax has produced it.
+        //
+        QUEUE.Push(function () {
+            for (var i = 1; i <= slides; i++) {
+                math[i] = MathJax.Hub.getAllJax("MathOutput" + i)[0];
+                box[i] = document.getElementById("box" + i);
+                SHOWBOX(i); // box is initially hidden so the braces don't show
+            }
+        });
+
+        //
+        //  The onchange event handler that typesets the math entered
+        //  by the user.  Hide the box, then typeset, then show it again
+        //  so we don't see a flash as the math is cleared and replaced.
+        //
+        window.UpdateMath = function (i, amath) {
+            QUEUE.Push([HIDEBOX, i], ["Text", math[i], amath], [SHOWBOX, i]);
+        }
+    })();
+</script>
